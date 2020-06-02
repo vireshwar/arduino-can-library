@@ -51,9 +51,11 @@
 
 #define MAX_CHAR_IN_MESSAGE 8
 
-class MCP_CAN {
-  private:
+byte txCtrlReg(byte i);
 
+class MCP_CAN {
+//  private:
+  public:
     byte   ext_flg;                         // identifier xxxID
     // either extended (the 29 LSB) or standard (the 11 LSB)
     unsigned long  can_id;                  // can id
@@ -67,7 +69,7 @@ class MCP_CAN {
         mcp2515 driver function
     */
 
-  private:
+//  private:
 
     void mcp2515_reset(void);                                   // reset mcp2515
 
