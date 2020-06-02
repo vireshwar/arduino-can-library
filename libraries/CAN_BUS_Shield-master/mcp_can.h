@@ -72,6 +72,8 @@ class MCP_CAN {
 //  private:
 
     void mcp2515_reset(void);                                   // reset mcp2515
+	
+	void mcp2515_fast_reset(void);                              // Fast reset mcp2515 (unstable)
 
     byte mcp2515_readRegister(const byte address);              // read mcp2515's register
 

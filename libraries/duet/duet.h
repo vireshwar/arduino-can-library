@@ -197,7 +197,7 @@ inline bool shouldWakeup(unsigned long targetOverflows, unsigned int targetCount
 }
 
 inline void resetCANController(int listenIDs[], int len){
-  CAN.mcp2515_reset();
+  CAN.mcp2515_fast_reset();
   CAN.mcp2515_configRate(CAN_500KBPS, MCP_16MHz);
   CAN.mcp2515_modifyRegister(MCP_RXB0CTRL,
                              MCP_RXB_RX_MASK | MCP_RXB_BUKT_MASK,

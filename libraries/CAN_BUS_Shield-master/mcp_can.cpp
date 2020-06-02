@@ -166,7 +166,7 @@ void MCP_CAN::mcp2515_reset(void) {
 
 /*********************************************************************************************************
 ** Function name:           mcp2515_fast_reset
-** Descriptions:            reset the device without delay
+** Descriptions:            reset the device without delay (could be unstable)
 *********************************************************************************************************/
 void MCP_CAN::mcp2515_fast_reset(void) {
     #ifdef SPI_HAS_TRANSACTION
