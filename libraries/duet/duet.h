@@ -147,12 +147,15 @@ inline long readMsgID() {
 
 inline void waitNewMsg(){
   bool received = false;
+  unsigned long receivedID=0;
   while (!received){
     while (CAN_MSGAVAIL == CAN.checkReceive()){
-      if (readMsgID()==victimID) {
-        received=true;
-        break;
-      }
+		receivedID=readMsgID();
+		if(CAN.isExtendedFrame()) receivedID=(receivedID>>18);
+		if (receivedID==victimID) {
+			received=true;
+			break;
+		}
     }
   }
 }
@@ -166,8 +169,8 @@ inline void disableOneShot(){
 }
 
 
-inline byte sendInAnyBuf(unsigned long id, unsigned char * buf, int len=msgLen){
-  return CAN.sendMsgBuf(id, 0, len, buf, false);
+inline byte sendInAnyBuf(unsigned long id, unsigned char * buf, byte ext, int len=msgLen){
+  return CAN.sendMsgBuf(id, ext, len, buf, false);
 }
 
 inline byte sendInParticularBuf(unsigned long id, unsigned char * buf, byte bufferIdx, int len=msgLen){
@@ -236,8 +239,22 @@ inline bool noTXPending(int bufsToCheck[], int len){
   return noTx;
 }
 
-void Serialprint(uint64_t value)
+inline void Serialprint(uint64_t value)
 {
   if ( value >= 10 ) Serialprint(value / 10);
   Serial.print((int)(value % 10));
+}
+
+// For RAID defense
+
+inline unsigned long padID(unsigned long idA){
+	unsigned long idExt = 0;
+	bool randomize = true;
+	if (randomize){
+		unsigned long idB = random(1UL << 18);
+		idExt = ((idA << 18) | idB);
+	} else {
+		idExt = idA << 18;
+	}
+	return idExt;
 }
