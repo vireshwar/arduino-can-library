@@ -109,6 +109,8 @@ class MCP_CAN {
 
     void mcp2515_write_canMsg(const byte buffer_sidh_addr, unsigned long id, byte ext, byte rtr, byte len,
                               volatile const byte* buf);     // read can msg
+    void mcp2515_buffer_canMsg(const byte buffer_sidh_addr, unsigned long id, byte ext, byte rtr, byte len,
+                              volatile const byte* buf);     // buffer can msg							  
     void mcp2515_read_canMsg(const byte buffer_load_addr, volatile unsigned long* id, volatile byte* ext,
                              volatile byte* rtr, volatile byte* len, volatile byte* buf);   // write can msg
     void mcp2515_start_transmit(const byte mcp_addr);           // start transmit

@@ -848,6 +848,45 @@ void MCP_CAN::mcp2515_write_canMsg(const byte buffer_sidh_addr, unsigned long id
 }
 
 /*********************************************************************************************************
+** Function name:           mcp2515_buffer_canMsg
+** Descriptions:            write msg, but do not transmit
+**                          Same as the mcp2515_write_canMsg with the start_transmit call commented
+*********************************************************************************************************/
+
+void MCP_CAN::mcp2515_buffer_canMsg(const byte buffer_sidh_addr, unsigned long id, byte ext, byte rtrBit, byte len,
+                                   volatile const byte* buf) {
+    byte load_addr = txSidhToTxLoad(buffer_sidh_addr);
+
+    byte tbufdata[4];
+    byte dlc = len | (rtrBit ? MCP_RTR_MASK : 0) ;
+    byte i;
+
+    mcp2515_id_to_buf(ext, id, tbufdata);
+
+    #ifdef SPI_HAS_TRANSACTION
+    SPI_BEGIN();
+    #endif
+    MCP2515_SELECT();
+    spi_readwrite(load_addr);
+    for (i = 0; i < 4; i++) {
+        spi_write(tbufdata[i]);
+    }
+    spi_write(dlc);
+    for (i = 0; i < len && i < CAN_MAX_CHAR_IN_MESSAGE; i++) {
+        spi_write(buf[i]);
+    }
+
+    MCP2515_UNSELECT();
+    #ifdef SPI_HAS_TRANSACTION
+    SPI_END();
+    #endif
+
+//    mcp2515_start_transmit(buffer_sidh_addr);
+
+}
+
+
+/*********************************************************************************************************
 ** Function name:           mcp2515_read_canMsg
 ** Descriptions:            read message
 *********************************************************************************************************/
