@@ -73,9 +73,9 @@ inline unsigned int sampleFrameBits(){
 	return msgIDlocal;
 }
 
-inline void causeError() {
+inline void setPinLow(int numCycle) {
   PORTD = B01111111; // Port-7 - Set to 0
-  __builtin_avr_delay_cycles(ERROR_CYC);  // 
+  __builtin_avr_delay_cycles(numCycle);  // 
   PORTD = B11111111; // Port-7 - Set to 1  
 }
 

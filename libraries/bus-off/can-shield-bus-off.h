@@ -156,6 +156,12 @@ inline void resetCANController(){
   CAN.mcp2515_setCANCTRL_Mode(MODE_NORMAL);
 }
 
+inline void resetErrorCounter(){
+  CAN.mcp2515_setCANCTRL_Mode(MODE_CONFIG);
+  CAN.mcp2515_configRate(CAN_500KBPS, MCP_16MHz);	
+  CAN.mcp2515_setCANCTRL_Mode(MODE_NORMAL);
+}
+
 inline bool noTXPending(int bufsToCheck[], int numBuf){
   bool noTx = true;
   for (int bufIdx=0; bufIdx<numBuf; bufIdx++){
