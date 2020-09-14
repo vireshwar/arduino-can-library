@@ -30,7 +30,7 @@ int phaseChangeToTestID = 513;
 int phaseChangeToTrainID = 512;
 
 const int victim_numIDs = 4;
-int victim_IDs[victim_numIDs] = {victimIDBase, victimIDBase+1, victimIDBase+2, victimIDBase+3}; 
+int victim_IDs[victim_numIDs] = {victimIDBase, victimIDBase+1, victimIDBase+2, victimIDBase+3};
 bool victim_sendIDs[victim_numIDs] = {true, false, false, false};
 float victim_periods[victim_numIDs] = {periodMs, periodMs, 100, 100};
 unsigned long victim_nextWakeupAtOverflows[victim_numIDs] = {2, 3, 4, 5};
@@ -38,7 +38,7 @@ unsigned int victim_nextWakeupAtCounter[victim_numIDs] = {100, 200, 300, 400};
 
 const int accomplice_numIDs = 6;
 int accomplice_IDs[accomplice_numIDs] = {precedeID1, precedeID2, accompliceID, precedeID3, precedeID4, victimID};
-bool accomplice_sendIDs[accomplice_numIDs] = {true, true, true, true, true, false}; 
+bool accomplice_sendIDs[accomplice_numIDs] = {true, true, true, true, true, false};
 float accomplice_periods[accomplice_numIDs] = {periodMs, periodMs, periodMs, periodMs, periodMs, periodMs};
 unsigned long accomplice_nextWakeupAtOverflows[accomplice_numIDs] = {2, 3, 4, 5, 6, 7};
 unsigned int accomplice_nextWakeupAtCounter[accomplice_numIDs] = {100, 200, 300, 400, 500, 600};
@@ -66,7 +66,7 @@ int attackerTEC = 0;
 
 
 //General vars
-volatile unsigned long overflows = 0;  
+volatile unsigned long overflows = 0;
 unsigned char len = 0;
 unsigned char buf[8];
 char strBuf[80];
@@ -79,7 +79,7 @@ inline void setupPhase(){
 	if (!trainingPhase){
 		victim_sendIDs[0] = false;
 		accomplice_sendIDs[5] = true;
-	
+
 	} else {
 		victim_sendIDs[0] = true;
 		accomplice_sendIDs[5] = false;
@@ -88,8 +88,8 @@ inline void setupPhase(){
 
 
 inline uint64_t getElapsedTime(){ //in us
-  uint64_t currOverflows = overflows; 
-  unsigned int currTimer = TCNT1; 
+  uint64_t currOverflows = overflows;
+  unsigned int currTimer = TCNT1;
   return (currOverflows*overflowTime + currTimer/freq);
 }
 
@@ -101,7 +101,7 @@ inline long getCounter(){
 inline void commonSetup(){
   setupPhase();
   Serial.begin(1000000);
-  while (CAN_OK != CAN.begin(CAN_500KBPS))             
+  while (CAN_OK != CAN.begin(CAN_500KBPS))
   {
     Serial.println("CAN BUS Shield init fail");
     Serial.println(" Init CAN BUS Shield again");
@@ -111,9 +111,9 @@ inline void commonSetup(){
   CAN.mcp2515_modifyRegister(MCP_TXB0CTRL,3,3);
   CAN.mcp2515_modifyRegister(MCP_TXB1CTRL,3,2);
   CAN.mcp2515_modifyRegister(MCP_TXB2CTRL,3,1);
-  TCCR1A = 0;  
-  TCCR1B = 0;  
-  TCCR1C = 0;  
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCCR1C = 0;
   TIMSK1 = _BV(TOIE1);
   delay(5000);
 }
@@ -177,8 +177,8 @@ inline byte sendInParticularBuf(unsigned long id, unsigned char * buf, byte buff
   return CAN.trySendMsgBuf(id, 0, 0, len, buf, bufferIdx);
 }
 
-ISR(TIMER1_OVF_vect){  
-  overflows++;  
+ISR(TIMER1_OVF_vect){
+  overflows++;
 }
 
 inline void setWakeupTimer(uint64_t duration, unsigned long *nextWakeupAtOverflows, unsigned int *nextWakeupAtCounter, bool current = true){
@@ -194,8 +194,8 @@ inline void setWakeupTimer(uint64_t duration, unsigned long *nextWakeupAtOverflo
 }
 
 inline bool shouldWakeup(unsigned long targetOverflows, unsigned int targetCounter){
-  unsigned long currOverflows = overflows; 
-  unsigned int currTimer = getCounter(); 
+  unsigned long currOverflows = overflows;
+  unsigned int currTimer = getCounter();
   return ((targetOverflows == currOverflows && targetCounter<currTimer) || (targetOverflows < currOverflows));
 }
 
@@ -243,18 +243,4 @@ inline void Serialprint(uint64_t value)
 {
   if ( value >= 10 ) Serialprint(value / 10);
   Serial.print((int)(value % 10));
-}
-
-// For RAID defense
-
-inline unsigned long padID(unsigned long idA){
-	unsigned long idExt = 0;
-	bool randomize = true;
-	if (randomize){
-		unsigned long idB = random(1UL << 18);
-		idExt = ((idA << 18) | idB);
-	} else {
-		idExt = idA << 18;
-	}
-	return idExt;
 }
